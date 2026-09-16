@@ -17,7 +17,7 @@
     <PackageIcon>VpnHood.png</PackageIcon>
     <PackageProjectUrl>https://github.com/vpnhood/VpnHood.AppLib.Assets.IpLocations</PackageProjectUrl>
     <RepositoryUrl>https://github.com/vpnhood/VpnHood.AppLib.Assets.IpLocations</RepositoryUrl>
-    <Version>7.0.745</Version>
+    <Version>7.0.746</Version>
     <FileVersion>$([System.DateTime]::Now.ToString("yyyy.M.d.HHmm"))</FileVersion>
     <PackageTags>IP Geolocation, IP2Location, VPN, Country Detection</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
