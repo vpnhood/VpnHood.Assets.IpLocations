@@ -20,7 +20,7 @@
   <PropertyGroup>
     <Description>The IP2Location LITE database (IP ranges for every country) as an inert asset package: the zip plus MSBuild targets that place it beside the consuming app. No compiled code, so Android carries it once rather than once per CPU architecture.</Description>
     <TargetFramework>net10.0</TargetFramework>
-    <PackageId>VpnHood.Assets.IpLocations.Ip2LocationLite</PackageId>
+    <PackageId>VpnHood.Core.IpLocations.Assets.Ip2LocationLite</PackageId>
     <IsPackable>true</IsPackable>
 
     <!-- Emit no assembly into the package and nothing to symbolize; compile no stray files; and do
@@ -39,8 +39,8 @@
     <Company>OmegaHood LLC</Company>
     <Copyright>© OmegaHood LLC. All rights reserved.</Copyright>
     <PackageIcon>VpnHood.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations.Ip2LocationLite</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations.Ip2LocationLite</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/vpnhood/VpnHood.Core.IpLocations.Assets.Ip2LocationLite</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vpnhood/VpnHood.Core.IpLocations.Assets.Ip2LocationLite</RepositoryUrl>
     <Version>8.2.851</Version>
     <PackageTags>IP Geolocation, IP2Location, VPN, Country Detection</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -50,8 +50,8 @@
   <!-- The entire payload, as an explicit allowlist of exactly what ships. -->
   <ItemGroup>
     <None Include="Resources\IpLocations.zip" Pack="true" PackagePath="buildTransitive\IpLocations.zip" />
-    <None Include="buildTransitive\VpnHood.Assets.IpLocations.Ip2LocationLite.targets" Pack="true" PackagePath="buildTransitive\" />
-    <None Include="build\VpnHood.Assets.IpLocations.Ip2LocationLite.targets" Pack="true" PackagePath="build\" />
+    <None Include="buildTransitive\VpnHood.Core.IpLocations.Assets.Ip2LocationLite.targets" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="build\VpnHood.Core.IpLocations.Assets.Ip2LocationLite.targets" Pack="true" PackagePath="build\" />
     <!-- CC BY-SA 4.0 requires that the licence, the copyright notice and the disclaimer travel WITH
          the data. These are IP2Location's own files, verbatim; LICENSE points at them. -->
     <None Include="Licenses\LICENSE-CC-BY-SA-4.0.TXT" Pack="true" PackagePath="licenses\" />

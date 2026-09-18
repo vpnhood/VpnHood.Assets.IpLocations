@@ -6,5 +6,5 @@
   <Folder Name="/pub/">
     <File Path="pub/PubVersion.json" />
   </Folder>
-  <Project Path="VpnHood.Assets.IpLocations.Ip2LocationLite/VpnHood.Assets.IpLocations.Ip2LocationLite.csproj" />
+  <Project Path="VpnHood.Core.IpLocations.Assets.Ip2LocationLite/VpnHood.Core.IpLocations.Assets.Ip2LocationLite.csproj" />
 </Solution>
