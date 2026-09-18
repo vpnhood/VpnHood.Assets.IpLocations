@@ -1,10 +1,18 @@
-                 GNU LESSER GENERAL PUBLIC LICENSE
-                    Version 2.1, February 1999
+This package is licensed in TWO PARTS, because it contains two different kinds of thing.
 
-This package is licensed under the GNU Lesser General Public License (LGPL) v3.0.  
-However, this license has additional terms regarding using IP geolocation data from **IP2Location LITE**.  
-See the **"ADDITIONAL LICENSE TERMS"** section below.
+  1. THE DATA - buildTransitive/IpLocations.zip, derived from the IP2Location LITE database - is
+     licensed under the Creative Commons Attribution-ShareAlike 4.0 International license
+     (CC BY-SA 4.0) and carries IP2Location's own attribution requirement. The full text is in
+     licenses/LICENSE-CC-BY-SA-4.0.TXT, and IP2Location's notice in licenses/README_LITE.TXT,
+     both shipped with this package. See ADDITIONAL LICENSE TERMS at the end of this file.
 
+  2. EVERYTHING ELSE - the MSBuild targets that place the data - is licensed under the GNU Lesser
+     General Public License version 2.1, reproduced in full below.
+
+The two are separate works: the targets are not derived from the database, and the database is not
+derived from the targets.
+
+--------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
  Copyright (C) 1991, 1999 Free Software Foundation, Inc.
  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -510,13 +518,28 @@ That's all there is to it!
 
 --------------------------------------------------------------------------------
 
-ADDITIONAL LICENSE TERMS
-Data Source
-This package includes IP geolocation data from IP2Location LITE.
+ADDITIONAL LICENSE TERMS - THE IP2LOCATION LITE DATA
+
+Data source
+This package includes IP geolocation data from IP2Location LITE (https://lite.ip2location.com).
 IP2Location LITE is Copyright (c) 2001-2024 Hexasoft Development Sdn. Bhd. All Rights Reserved.
+IP2Location is a registered trademark of Hexasoft Development Sdn Bhd.
 
-License & Attribution
-This package requires attribution as per IP2Location LITE’s license.
-If you use this package in your project, you must acknowledge IP2Location LITE as follows:
+License
+The data is licensed under CC BY-SA 4.0. Its full text is shipped with this package as
+licenses/LICENSE-CC-BY-SA-4.0.TXT and is also at
+https://creativecommons.org/licenses/by-sa/4.0/legalcode.
 
-This nuget uses the IP2Location LITE database for IP geolocation." For more details, visit IP2Location LITE License.
+buildTransitive/IpLocations.zip is a converted form of the IP2Location LITE database - the same
+country ranges in a different container - and is therefore offered under those same terms. Anyone
+redistributing it, or an adaptation of it, carries the ShareAlike obligation forward.
+
+Attribution
+IP2Location LITE requires attribution. All sites, advertising materials and documentation that
+mention features or the use of this database must display this acknowledgment:
+
+  "[Your site name or product name] uses the IP2Location LITE database for IP geolocation
+  (https://lite.ip2location.com)."
+
+This obligation is not discharged by this file. It falls on whoever ships a product built with
+this package, in that product's own documentation, about screen or website.

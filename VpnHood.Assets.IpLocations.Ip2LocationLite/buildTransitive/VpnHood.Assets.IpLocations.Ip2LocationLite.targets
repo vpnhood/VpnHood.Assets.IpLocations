@@ -1,8 +1,8 @@
 ﻿<Project>
 	<!-- The IP2Location LITE database, placed the way each platform reads files, so the app that
-	     references this package writes nothing to get it and VpnHood.Core.Toolkit's AssetStore reads it
-	     where its platform put it - AssetStore.OpenRead("iplocations/IpLocations.zip"). That path is
-	     the whole contract; this package ships no code to hold it.
+	     references this package writes nothing to get it and reads it where its platform put it, at
+	     the asset path "iplocations/IpLocations.zip". That path is the whole contract between this
+	     package and its consumer; the package ships no code to hold it.
 
 	     This file lives in buildTransitive/, not build/, on purpose: NuGet imports build/<PackageId>
 	     .targets only for a DIRECT PackageReference, while buildTransitive/<PackageId>.targets reaches
@@ -28,18 +28,14 @@
 		<VhIpLocationsIsBrowserApp Condition="'$(VhIpLocationsIsApp)' == 'true'">$(TargetFramework.Contains('-browser'))</VhIpLocationsIsBrowserApp>
 	</PropertyGroup>
 
-	<!-- Android: one entry in base/assets of the package, which is not split by CPU architecture.
-	     AndroidAssetProvider reads it WHERE IT LIES - the entry's byte range inside the .apk - so
-	     nothing is copied to storage and nothing is held in memory. That requires the entry to be
-	     STORED rather than deflated, which is what the property below arranges; without it the entry
-	     has no file descriptor to open and the read fails loudly.
+	<!-- Android: one entry in base/assets of the package, which is not split by CPU architecture -
+	     the whole reason this ships as data rather than inside an assembly, which the platform keeps
+	     once per ABI. A package's assets are entries of the .apk rather than files, so a reader opens
+	     the asset through AssetManager and copies it, which is what README.md shows.
 
 	     The folder's name twice on purpose: .NET for Android takes a leading assets\ in the link as
 	     the package's asset root and drops it, and the folder must keep its name under that root, so
-	     the asset is "iplocations/IpLocations.zip" - the path the app asks AssetStore for. -->
-	<PropertyGroup Condition="'$(VhIpLocationsIsAndroidApp)' == 'true'">
-		<AndroidStoreUncompressedFileExtensions>$(AndroidStoreUncompressedFileExtensions);.zip</AndroidStoreUncompressedFileExtensions>
-	</PropertyGroup>
+	     the asset is "iplocations/IpLocations.zip" - the path the app asks for. -->
 	<ItemGroup Condition="'$(VhIpLocationsIsAndroidApp)' == 'true'">
 		<AndroidAsset Include="$(VhIpLocationsDir)IpLocations.zip" Link="assets\iplocations\IpLocations.zip" Visible="false" />
 	</ItemGroup>

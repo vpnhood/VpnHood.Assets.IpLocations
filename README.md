@@ -5,7 +5,7 @@ and **no compiled code**. Nothing in your codebase can take a reference on it �
 bytes, not a library.
 
 ```xml
-<PackageReference Include="VpnHood.Assets.Ip2LocationLite" />
+<PackageReference Include="VpnHood.Assets.IpLocations.Ip2LocationLite" />
 ```
 
 That is the whole integration. The package's targets place `IpLocations.zip` where your app's
@@ -45,34 +45,34 @@ var path = Path.Combine(AppContext.BaseDirectory, "iplocations", "IpLocations.zi
 using var zip = new ZipArchive(File.OpenRead(path), ZipArchiveMode.Read);
 ```
 
-### Android — read it in place, do not copy it
+### Android
 
-On Android the asset is **not a file**. It is an entry of the `.apk`, and `AssetManager.Open`
-returns a forward-only stream, which `ZipArchive` cannot use because it seeks.
+On Android the asset is **not a file**. It is an entry of the `.apk`, reachable only through
+`AssetManager`, and the stream it hands out is forward-only — which `ZipArchive` cannot use,
+because it reads the central directory at the end of the file and then seeks back to each entry.
 
-Do **not** solve that by copying the asset to the cache folder: that spends another 14.6 MB of the
-user's storage on bytes the app already carries. Read it where it lies instead. `OpenFd` gives the
-entry's offset and length inside the `.apk`, and the `.apk` is an ordinary file, so a window onto
-that byte range is an ordinary seekable stream:
+So copy it into memory and read it from there:
 
 ```csharp
-// 1. where the entry lies inside the package
-using var descriptor = context.Assets.OpenFd("iplocations/IpLocations.zip");
-var packagePath = context.ApplicationInfo.SourceDir;
+using var source = context.Assets.Open("iplocations/IpLocations.zip");
+var memoryStream = new MemoryStream();
+source.CopyTo(memoryStream);
+memoryStream.Position = 0;
 
-// 2. a seekable window onto that range - nothing is copied
-var stream = new SubStream(File.OpenRead(packagePath), descriptor.StartOffset, descriptor.Length);
-using var zip = new ZipArchive(stream, ZipArchiveMode.Read);
+using var zip = new ZipArchive(memoryStream, ZipArchiveMode.Read);
 ```
 
-`SubStream` here is any read-only, seekable window over another stream: position 0 is the window's
-start, its length is the window's length, and each read is served from `offset + position` of the
-source. It is about sixty lines, and it is the only code this package's Android support needs.
+The copy costs the database's full size in memory for as long as you hold it, so open it when a
+lookup actually needs it and dispose it afterwards, rather than keeping one alive for the life of
+the app.
 
-**The entry must be stored, not deflated**, or `OpenFd` has no file descriptor to hand out and
-throws. This package's targets already arrange that by adding `.zip` to
-`AndroidStoreUncompressedFileExtensions` for the consuming app, so it works out of the box; if you
-place the file yourself, you have to do the same.
+`AssetManager.OpenFd` will tell you the entry's byte offset and length inside the `.apk`, which
+tempts you to read it in place with no copy at all. Two conditions have to hold for that to be
+correct: the entry must be **stored rather than deflated**, or there is no file descriptor to open;
+and the offset must index into the file you think it does, which is `ApplicationInfo.SourceDir` for
+a normal install but not necessarily for one delivered in a split or an asset pack. The second is
+the dangerous one — if it is wrong the read does not fail, it returns whatever bytes lie at that
+offset. Weigh that before choosing it over a copy.
 
 ## What is in the zip
 
@@ -80,16 +80,32 @@ One entry per country, named by its lower-case ISO code (`tr.ips`), holding that
 ranges already sorted and unified, plus `_checksum.txt` naming the build of the data. Every entry
 is stored uncompressed.
 
+## Licensing — read this before you ship
+
+This package is licensed in **two parts**, because it holds two different kinds of thing.
+
+| part | licence |
+| --- | --- |
+| `buildTransitive/IpLocations.zip` — the data, derived from IP2Location LITE | **CC BY-SA 4.0**, plus IP2Location's attribution requirement |
+| the MSBuild targets that place it | LGPL v2.1 |
+
+Both licence texts ship inside the package, under `licenses/`, and `LICENSE` sets out which applies
+to what. The data is a converted form of the IP2Location LITE database, so anyone redistributing it
+or an adaptation of it carries the **ShareAlike** obligation forward.
+
+### The attribution you owe
+
+IP2Location LITE requires that **all sites, advertising materials and documentation** mentioning
+features or the use of this database display this acknowledgment:
+
+> [Your site name or product name] uses the IP2Location LITE database for
+> [IP geolocation](https://lite.ip2location.com).
+
+Referencing this package does **not** discharge that for you. It lands on your product — its about
+screen, its documentation, or its website — with your own name in place of the bracketed part.
+
 ## Data source
 
 This package includes **IP geolocation data** from [IP2Location LITE](https://lite.ip2location.com).
-IP2Location LITE is **Copyright (c) Hexasoft Development Sdn. Bhd.** All Rights Reserved.
-
-## License & attribution
-
-This package **requires attribution** under IP2Location LITE's license. If you use it, you must
-acknowledge IP2Location LITE as follows:
-
-> This nuget uses the IP2Location LITE database for [IP geolocation](https://lite.ip2location.com).
-
-For more details, visit the [IP2Location LITE license](https://lite.ip2location.com).
+IP2Location LITE is **Copyright (c) 2001-2024 Hexasoft Development Sdn. Bhd.** All Rights Reserved.
+IP2Location is a registered trademark of Hexasoft Development Sdn Bhd.
