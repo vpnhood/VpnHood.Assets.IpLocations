@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Inert asset package: the .nupkg ships DATA and inspectable MSBuild XML, NO code. There is no
        source here, no assembly is emitted (IncludeBuildOutput=false) and there are no dependencies -
@@ -39,8 +39,8 @@
     <Company>OmegaHood LLC</Company>
     <Copyright>© OmegaHood LLC. All rights reserved.</Copyright>
     <PackageIcon>VpnHood.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations.Ip2LocationLite</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vpnhood/VpnHood.Assets.IpLocations.Ip2LocationLite</RepositoryUrl>
     <Version>8.2.851</Version>
     <PackageTags>IP Geolocation, IP2Location, VPN, Country Detection</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
