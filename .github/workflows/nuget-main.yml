@@ -66,8 +66,10 @@ jobs:
     - name: Build Solution
       run: dotnet build --no-restore --configuration $BUILD_CONFIG
 
+    # No symbols: this is an inert asset package with no assembly, and forcing IncludeSymbols on it
+    # fails the pack (NU5017 - a symbols package with no dependencies nor content).
     - name: Pack All Projects
-      run: dotnet pack --configuration $BUILD_CONFIG -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      run: dotnet pack --configuration $BUILD_CONFIG
 
     - name: Publish
       run: dotnet nuget push "**/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGET_API_KEY }}

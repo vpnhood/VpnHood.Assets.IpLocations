@@ -1,0 +1,56 @@
+﻿<Project>
+	<!-- The IP2Location LITE database, placed the way each platform reads files, so the app that
+	     references this package writes nothing to get it and VpnHood.Core.Toolkit's AssetStore reads it
+	     where its platform put it - AssetStore.OpenRead("iplocations/IpLocations.zip"). That path is
+	     the whole contract; this package ships no code to hold it.
+
+	     This file lives in buildTransitive/, not build/, on purpose: NuGet imports build/<PackageId>
+	     .targets only for a DIRECT PackageReference, while buildTransitive/<PackageId>.targets reaches
+	     a consumer at any depth. An app that references a library that references this package gets
+	     the database placed without naming it. build/<PackageId>.targets imports this one, so a direct
+	     reference runs the same file.
+
+	     Placed by an APP's build, never a library's: OutputType is the test below, because the
+	     database is 14.6 MB and a library that merely passes the reference along has no use for a copy
+	     of it in bin. TargetFramework is the app's here, and it is the one property already set at
+	     this point of the build (TargetPlatformIdentifier is computed later, in the SDK's own
+	     targets). A browser build gets nothing: WASM has no file to read. -->
+	<PropertyGroup>
+		<VhIpLocationsDir>$(MSBuildThisFileDirectory)</VhIpLocationsDir>
+		<!-- "Is this an app?" is not one property. A .NET for Android APP declares OutputType Exe and
+		     the Android SDK REWRITES it to Library - the app is a .dll packaged into an APK - so an
+		     OutputType test alone silently places nothing on the one platform that needs it most.
+		     AndroidApplication is the flag that actually separates an Android app (true) from an
+		     Android library (false); everywhere else, an app is Exe or WinExe. -->
+		<VhIpLocationsIsApp Condition="'$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe' Or '$(AndroidApplication)' == 'true'">true</VhIpLocationsIsApp>
+		<VhIpLocationsIsAndroidApp Condition="'$(VhIpLocationsIsApp)' == 'true'">$(TargetFramework.Contains('-android'))</VhIpLocationsIsAndroidApp>
+		<VhIpLocationsIsAppleApp Condition="'$(VhIpLocationsIsApp)' == 'true' And ($(TargetFramework.Contains('-ios')) Or $(TargetFramework.Contains('-tvos')) Or $(TargetFramework.Contains('-maccatalyst')))">true</VhIpLocationsIsAppleApp>
+		<VhIpLocationsIsBrowserApp Condition="'$(VhIpLocationsIsApp)' == 'true'">$(TargetFramework.Contains('-browser'))</VhIpLocationsIsBrowserApp>
+	</PropertyGroup>
+
+	<!-- Android: one entry in base/assets of the package, which is not split by CPU architecture.
+	     AndroidAssetProvider reads it WHERE IT LIES - the entry's byte range inside the .apk - so
+	     nothing is copied to storage and nothing is held in memory. That requires the entry to be
+	     STORED rather than deflated, which is what the property below arranges; without it the entry
+	     has no file descriptor to open and the read fails loudly.
+
+	     The folder's name twice on purpose: .NET for Android takes a leading assets\ in the link as
+	     the package's asset root and drops it, and the folder must keep its name under that root, so
+	     the asset is "iplocations/IpLocations.zip" - the path the app asks AssetStore for. -->
+	<PropertyGroup Condition="'$(VhIpLocationsIsAndroidApp)' == 'true'">
+		<AndroidStoreUncompressedFileExtensions>$(AndroidStoreUncompressedFileExtensions);.zip</AndroidStoreUncompressedFileExtensions>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(VhIpLocationsIsAndroidApp)' == 'true'">
+		<AndroidAsset Include="$(VhIpLocationsDir)IpLocations.zip" Link="assets\iplocations\IpLocations.zip" Visible="false" />
+	</ItemGroup>
+
+	<!-- iOS, tvOS and Mac Catalyst: a folder of the app bundle, read in place. -->
+	<ItemGroup Condition="'$(VhIpLocationsIsAppleApp)' == 'true'">
+		<BundleResource Include="$(VhIpLocationsDir)IpLocations.zip" Link="iplocations\IpLocations.zip" Visible="false" />
+	</ItemGroup>
+
+	<!-- Windows and Linux: a folder beside the executable, read in place. -->
+	<ItemGroup Condition="'$(VhIpLocationsIsApp)' == 'true' And '$(TargetFramework)' != '' And '$(VhIpLocationsIsAndroidApp)' != 'true' And '$(VhIpLocationsIsAppleApp)' != 'true' And '$(VhIpLocationsIsBrowserApp)' != 'true'">
+		<None Include="$(VhIpLocationsDir)IpLocations.zip" Link="iplocations\IpLocations.zip" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+	</ItemGroup>
+</Project>

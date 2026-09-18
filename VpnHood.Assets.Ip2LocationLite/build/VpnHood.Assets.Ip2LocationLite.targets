@@ -1,0 +1,6 @@
+﻿<Project>
+	<!-- NuGet imports this file for a DIRECT PackageReference and buildTransitive/<PackageId>.targets
+	     for one reached through another package or project. Both paths must place the same file, so
+	     this one only forwards: the placement lives next door, once. -->
+	<Import Project="$(MSBuildThisFileDirectory)..\buildTransitive\VpnHood.Assets.Ip2LocationLite.targets" />
+</Project>
